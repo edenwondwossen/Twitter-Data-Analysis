@@ -1,3 +1,5 @@
+import csv
+import pandas as pd
 class Clean_Tweets:
     """
     The PEP8 Standard AMAZING!!!
@@ -6,14 +8,12 @@ class Clean_Tweets:
         self.df = df
         print('Automation in Action...!!!')
         
-    def drop_unwanted_column(self, df:pd.DataFrame)->pd.DataFrame:
+    def drop_unwanted_column(self, df:pd.DataFrame, column: list)->pd.DataFrame:
         """
         remove rows that has column names. This error originated from
         the data collection stage.  
         """
-        unwanted_rows = df[df['retweet_count'] == 'retweet_count' ].index
-        df.drop(unwanted_rows , inplace=True)
-        df = df[df['polarity'] != 'polarity']
+        df.drop(columns=column, inplace=True)
         
         return df
     def drop_duplicate(self, df:pd.DataFrame)->pd.DataFrame:
@@ -51,3 +51,14 @@ class Clean_Tweets:
         df = df[df["lang"] == "en"]
         
         return df
+if __name__ == "__main__":
+    columns = ['hashtags', 'user_mentions']
+    df = pd.read_csv('processed_tweet_data.csv')
+    tweet = Clean_Tweets(df)
+    cleaned_data = tweet.drop_unwanted_column(df,columns)
+    cleaned_data = tweet.drop_duplicate(df)
+    #datetime = tweet.convert_to_datetime(df)
+    #numbers = tweet.convert_to_numbers(df)
+    cleaned_data = tweet.remove_non_english_tweets(df)
+    print(cleaned_data)
+    cleaned_data.to_csv('modified_processed_tweet_data.csv')
